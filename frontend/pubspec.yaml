@@ -36,6 +36,10 @@ dependencies:
   cupertino_icons: ^1.0.8
   camera: ^0.12.0
   gal: ^2.3.2
+  flutter_tts: ^3.8.5
+  vibration: ^2.0.0
+  http: ^1.2.1
+
 
 dev_dependencies:
   flutter_test:
