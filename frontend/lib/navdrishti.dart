@@ -30,7 +30,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
 
-  late CameraController controller;
+  CameraController? controller;
   int cameraIndex = 0;
 
   final FlutterTts flutterTts = FlutterTts();
@@ -54,7 +54,6 @@ class _HomeScreenState extends State<HomeScreen> {
     if (response.statusCode == 200) {
 
       var responseData = await response.stream.bytesToString();
-
       var jsonData = jsonDecode(responseData);
 
       var objects = jsonData["objects"];
@@ -87,7 +86,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ResolutionPreset.high,
     );
 
-    await controller.initialize();
+    await controller!.initialize();
 
     if (!mounted) return;
     setState(() {});
@@ -96,7 +95,9 @@ class _HomeScreenState extends State<HomeScreen> {
   /// MICROPHONE FEEDBACK
   Future<void> micFeedback() async {
 
-    XFile image = await controller.takePicture();
+    if (controller == null || !controller!.value.isInitialized) return;
+
+    XFile image = await controller!.takePicture();
     sendImageToBackend(File(image.path));
 
     if (await Vibration.hasVibrator() ?? false) {
@@ -109,16 +110,18 @@ class _HomeScreenState extends State<HomeScreen> {
   /// CAMERA SWITCH
   Future<void> switchCamera() async {
 
+    if (controller == null) return;
+
     cameraIndex = cameraIndex == 0 ? 1 : 0;
 
-    await controller.dispose();
+    await controller!.dispose();
 
     controller = CameraController(
       cameras[cameraIndex],
       ResolutionPreset.high,
     );
 
-    await controller.initialize();
+    await controller!.initialize();
 
     setState(() {});
 
@@ -137,7 +140,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void dispose() {
-    controller.dispose();
+    controller?.dispose();
     flutterTts.stop();
     super.dispose();
   }
@@ -177,13 +180,13 @@ class _HomeScreenState extends State<HomeScreen> {
               margin: const EdgeInsets.symmetric(horizontal: 8),
               child: ClipPath(
                 clipper: CameraArchClipper(),
-                child: controller.value.isInitialized
+                child: controller != null && controller!.value.isInitialized
                     ? FittedBox(
                   fit: BoxFit.cover,
                   child: SizedBox(
-                    width: controller.value.previewSize!.height,
-                    height: controller.value.previewSize!.width,
-                    child: CameraPreview(controller),
+                    width: controller!.value.previewSize!.height,
+                    height: controller!.value.previewSize!.width,
+                    child: CameraPreview(controller!),
                   ),
                 )
                     : const Center(
