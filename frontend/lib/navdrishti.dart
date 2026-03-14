@@ -92,7 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {});
   }
 
-  /// MICROPHONE FEEDBACK
+  /// START BUTTON FUNCTION
   Future<void> micFeedback() async {
 
     if (controller == null || !controller!.value.isInitialized) return;
@@ -104,7 +104,7 @@ class _HomeScreenState extends State<HomeScreen> {
       Vibration.vibrate(duration: 150);
     }
 
-    await flutterTts.speak("Microphone");
+    await flutterTts.speak("Starting environment summary");
   }
 
   /// CAMERA SWITCH
@@ -125,12 +125,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
     setState(() {});
 
-    /// VIBRATION
     if (await Vibration.hasVibrator() ?? false) {
       Vibration.vibrate(duration: 150);
     }
 
-    /// SPEECH
     if (cameraIndex == 0) {
       await flutterTts.speak("Camera flipped to rear camera");
     } else {
@@ -214,13 +212,20 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
 
-                /// MIC BUTTON
+                /// START BUTTON
                 GestureDetector(
                   onTap: micFeedback,
                   child: const CircleAvatar(
                     radius: 55,
                     backgroundColor: Colors.blue,
-                    child: Icon(Icons.mic, size: 50),
+                    child: Text(
+                      "START",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                 ),
 
