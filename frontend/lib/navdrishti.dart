@@ -4,6 +4,7 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:vibration/vibration.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';
+import 'dart:convert';
 
 late List<CameraDescription> cameras;
 
@@ -54,7 +55,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
       var responseData = await response.stream.bytesToString();
 
-      print(responseData);
+      var jsonData = jsonDecode(responseData);
+
+      var objects = jsonData["objects"];
+
+      print(jsonData);
+
+      if(objects.isNotEmpty){
+        await flutterTts.speak(objects.join(", "));
+      }
 
     } else {
 
